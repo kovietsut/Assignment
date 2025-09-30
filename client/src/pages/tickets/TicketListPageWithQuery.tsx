@@ -20,6 +20,7 @@ const TicketListPageWithQuery = () => {
     filteredTickets,
     users,
     isLoading,
+    isFetching,
     error,
     createTicketMutation,
     completeTicketMutation,
@@ -67,7 +68,9 @@ const TicketListPageWithQuery = () => {
         </Alert>
       )}
 
-      {filteredTickets?.length === 0 ? (
+      {filteredTickets?.length === 0 &&
+      !createTicketMutation.isPending &&
+      !isFetching ? (
         <Box sx={styles.emptyStateContainer}>
           <Typography variant="h6" color="text.secondary" gutterBottom>
             {filter === "All"
@@ -81,16 +84,25 @@ const TicketListPageWithQuery = () => {
           </Typography>
         </Box>
       ) : (
-        <Grid container spacing={3}>
-          {filteredTickets?.map((ticket) => (
-            <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={ticket.id}>
-              <TicketCard
-                ticket={ticket}
-                onToggleComplete={handleToggleComplete}
-              />
+        <>
+          {isFetching && (
+            <Box sx={styles.loadingContainer}>
+              <CircularProgress />
+            </Box>
+          )}
+          {filteredTickets && filteredTickets.length > 0 && (
+            <Grid container spacing={3}>
+              {filteredTickets.map((ticket) => (
+                <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={ticket.id}>
+                  <TicketCard
+                    ticket={ticket}
+                    onToggleComplete={handleToggleComplete}
+                  />
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
+          )}
+        </>
       )}
 
       <AddTicketModal

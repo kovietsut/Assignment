@@ -53,7 +53,12 @@ export const useTicketListPageState = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // React Query hooks
-  const { data: ticketsResponse, isLoading, error } = useFetchTickets();
+  const {
+    data: ticketsResponse,
+    isLoading,
+    isFetching,
+    error,
+  } = useFetchTickets();
   const { data: usersResponse } = useFetchUsers();
   const createTicketMutation = useTicketCreate();
   const assignTicketMutation = useTicketAssign();
@@ -114,6 +119,7 @@ export const useTicketListPageState = () => {
 
     // Query states
     isLoading,
+    isFetching,
     error,
 
     // Mutations
