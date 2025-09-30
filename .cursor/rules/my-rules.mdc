@@ -1,0 +1,108 @@
+---
+description: |
+  Enforce a modular and scalable component structure using Atomic Design principles.
+  Each component must follow strict folder and file organization. TailwindCSS must be used for styling.
+  Subcomponents must be grouped semantically, and code must separate UI from logic.
+globs:
+  - "**/*.tsx"
+  - "**/*.ts"
+alwaysApply: false
+---
+
+## 📁 Component Folder Structure Convention
+
+- Each screen or top-level component (e.g. Homepage, Dashboard, Profile) must be placed in a dedicated folder.
+- That folder must contain at least:
+  - `ComponentName.page.tsx` – main component file (layout + render).
+  - `ComponentName.state.ts` – state, hooks, logic.
+  - `ComponentName.styles.ts` – optional styles using MUI's `sx` prop for styling.
+  - `index.tsx` – re-export file page using `export default Component`.
+
+✅ Example structure:
+
+---
+
+## 📦 File Naming Rules
+
+| File                     | Responsibility                                 |
+| ------------------------ | ---------------------------------------------- |
+| `Component.page.tsx`     | Top-level layout and structure.                |
+| `Component.state.ts`     | Hooks, Zustand, local state logic.             |
+| `Component.styles.ts`    | Tailwind variants or styled logic if needed.   |
+| `SubComponent.tsx`       | Reusable child logic/UI block.                 |
+| `SubComponent.state.ts`  | Logic specifically for the subcomponent.       |
+| `SubComponent.styles.ts` | Styles for the subcomponent.                   |
+| `index.tsx`              | Barrel file to `export default` the main page. |
+
+> All subcomponents should be colocated in folders when they grow in complexity (form, card, list, section, etc.).
+
+---
+
+## ⚙️ Code Implementation Guidelines
+
+- ✅ Follow **Atomic Design** principles: Organisms > Molecules > Atoms.
+- ✅ Prefer **early returns** in components and handlers.
+- ✅ Use **TailwindCSS only** for all styling; no external CSS files.
+- ✅ Use `class:` directive instead of ternaries for conditional class logic.
+- ✅ Use **descriptive** and **semantic** names for variables, components, and handlers.
+- ✅ Use `handlePrefix` for all event handlers (`handleClick`, `handleSubmit`, etc.).
+- ✅ Use `const` instead of `function` declarations.
+- ✅ Separate data-fetching/state logic (`.state.ts`) from UI (`.tsx`).
+- ✅ All components must be **accessible**: include `tabIndex`, `aria-label`, `onClick`, and `onKeyDown` as needed.
+
+---
+
+## 🧱 Barrel File Rule
+
+Every component folder must contain an `index.tsx`:
+
+```ts
+import Homepage from "./Homepage.page";
+export default Homepage;
+```
+
+## 🧭 Routing Architecture Guidelines (React Router v6.9+)
+
+- Use `useRoutes()` for all route definitions; avoid `<Route>` tree manually in JSX.
+- Use `lazy()` + `Loadable()` wrapper for lazy-loading route components.
+- Nest routes under layout containers (e.g., `AuthLayout`, `MainLayout`) using `children` property.
+- Use `Navigate` with `replace` to handle redirects and fallback routing.
+- Use route guards (`AuthGuard`, `GuestGuard`) to protect pages by nesting under `element`.
+- Define error pages (`401`, `403`, `404`, `500`) as direct routes.
+- Use `Component: X` (not `element`) for top-level route components to enable automatic code-splitting.
+- Group features under folders with semantic URLs:
+  - Example: `/genres/list`, `/genres/new`, `/genres/detail/:id`
+
+## 🔁 TanStack Query Convention
+
+- All TanStack Query hooks must be declared in **`/libs/react-query/reactQuery.ts`**
+- The file must contain:
+
+  - `useFetch` – Generic `useQuery`
+  - `usePrefetch` – Prefetch with `queryClient`
+  - `useReactMutation` – General mutation
+  - `usePost` – POST wrapper
+  - `useUpdate` – PUT/PATCH wrapper
+  - `useDelete` – DELETE wrapper
+
+- These hooks must be imported in `/services/*.ts` and never duplicated in pages.
+- Each hook must provide type-safety and allow override of `onSuccess`, `onError`, etc.
+- Pages should only call service-layer hooks, never use raw `useQuery` or `useMutation`.
+
+✅ Example `/services/genre.ts`:
+
+```ts
+import { useFetch, usePost } from "@/libs/react-query/reactQuery";
+import { genreApi } from "@/apis";
+
+export const useGenres = () =>
+  useFetch({
+    queryKey: ["genres"],
+    queryFn: genreApi.getList,
+  });
+
+export const useCreateGenre = () =>
+  usePost(genreApi.create, {
+    onSuccess: () => toast.success("Genre created"),
+  });
+```
