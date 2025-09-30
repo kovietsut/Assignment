@@ -1,33 +1,38 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Avatar } from "@mui/material";
 import Iconify from "@/components/atoms/Iconify";
 import useStyle from "./Appbar.styles";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PATH } from "@/routes/path";
 
 export const Appbar = () => {
   const styles = useStyle();
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path);
 
   return (
     <Box sx={styles.appbar}>
       <Box sx={styles.container}>
-        <Box sx={styles.navItems}>
-          <Box 
-            sx={isActive(PATH.tickets.list) ? styles.navItemActive : styles.navItem}
-            onClick={() => navigate(PATH.tickets.list)}
-          >
-            <Iconify icon="mdi:ticket" sx={styles.icon} />
-            <Typography sx={isActive(PATH.tickets.list) ? styles.navTextActive : styles.navText}>
-              All Tickets
-            </Typography>
-          </Box>
+        {/* Left: App Title */}
+        <Box
+          sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+          onClick={() => navigate(PATH.tickets.list)}
+        >
+          <Iconify icon="mdi:ticket" sx={{ mr: 1, fontSize: 24 }} />
+          <Typography variant="h6" sx={{ fontWeight: 600, color: "inherit" }}>
+            Ticket Manager
+          </Typography>
         </Box>
-        <Box sx={styles.hamburgerMenu}>
-          <Iconify icon="mdi:menu" sx={styles.icon} />
-        </Box>
+
+        {/* Right: User Avatar Placeholder */}
+        <Avatar
+          sx={{
+            width: 32,
+            height: 32,
+            bgcolor: "primary.main",
+            fontSize: "0.875rem",
+          }}
+        >
+          U
+        </Avatar>
       </Box>
     </Box>
   );

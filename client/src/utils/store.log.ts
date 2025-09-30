@@ -1,5 +1,4 @@
 import { type StateCreator, type StoreMutatorIdentifier } from "zustand";
-import { envLog, isDev } from "./logger";
 
 type Logger = <
   T,
@@ -15,12 +14,9 @@ type LoggerImpl = <T>(
   name?: string
 ) => StateCreator<T, [], []>;
 
-const loggerImpl: LoggerImpl = (f, name) => (set, get, store) => {
+const loggerImpl: LoggerImpl = (f) => (set, get, store) => {
   const loggedSet = ((...args: Parameters<typeof set>) => {
     set(...args);
-    if (isDev) {
-      envLog(...(name ? [`${name}:`] : []), get());
-    }
   }) as typeof set;
   store.setState = loggedSet;
 

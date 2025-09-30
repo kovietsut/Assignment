@@ -1,4 +1,6 @@
 import MainLayout from "@/components/templates/main_layout/MainLayout";
+import TicketListPageWithQuery from "@/pages/tickets/TicketListPageWithQuery";
+import TicketDetailPage from "@/pages/ticket-detail/TicketDetailPage";
 import { PATH } from "@/routes/path";
 import { BrowserRouter, Navigate, useRoutes } from "react-router-dom";
 
@@ -7,13 +9,14 @@ function Routes() {
     { element: <Navigate to={PATH.tickets.list} replace />, index: true },
     {
       path: "app",
-      element: (
-          <MainLayout />
-      ),
+      element: <MainLayout />,
       children: [
         { element: <Navigate to={PATH.tickets.list} replace />, index: true },
-        { path: "tickets", element: <div>Ticket List (To be implemented)</div> },
-        { path: "tickets/:id", element: <div>Ticket Detail - ID: :id (To be implemented)</div> },
+        { path: "tickets", element: <TicketListPageWithQuery /> },
+        {
+          path: "tickets/:id",
+          element: <TicketDetailPage />,
+        },
       ],
     },
     { path: "*", element: <Navigate to="/404" replace /> },

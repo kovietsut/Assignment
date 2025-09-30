@@ -1,0 +1,10 @@
+node_modules
+
+# Nx cache
+.nxcache
+
+# Build output
+dist/server
+
+# Lock files
+client/yarn.lock
